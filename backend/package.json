@@ -1,0 +1,20 @@
+{
+  "name": "backend-mangarosa",
+  "version": "1.0.0",
+  "description": "backend dos serviços da empresa Manga Rosa",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gabriel Martins Padoin",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.29.1",
+    "pg": "^8.6.0"
+  },
+  "devDependencies": {
+    "consign": "^0.1.6",
+    "nodemon": "^2.0.7"
+  }
+}
