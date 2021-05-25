@@ -4,6 +4,7 @@
   "description": "backend dos serviços da empresa Manga Rosa",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Gabriel Martins Padoin",
