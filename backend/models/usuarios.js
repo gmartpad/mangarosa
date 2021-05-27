@@ -16,7 +16,9 @@ class Usuario {
         const nomeEhValido = usuario.nome.length >= 5;
         
         const emailEhValido = /\S+@\S+\.\S+/.test(usuario.email);
-        
+
+        const cpfEhValido = /[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/.test(usuario.cpf);
+
         const validacoes = [
             {
                 nome: 'nome',
@@ -26,8 +28,13 @@ class Usuario {
             {
                 nome: 'email',
                 valido: emailEhValido,
-                mensagem: 'O email não é um email válido'
-            }
+                mensagem: 'O email não é um email válido. Ex: fulano@mail.com'
+            },
+            {
+                nome: 'cpf',
+                valido: cpfEhValido,
+                mensagem: 'O cpf não está no formato válido. Ex: 123.456.789-01'
+            },
         ];
         
         const erros = validacoes.filter(campo => !campo.valido);
@@ -49,17 +56,38 @@ class Usuario {
                    ...usuario,
                 }
 
-                const sql = format('INSERT INTO registrodeponto.Usuarios ?', usuarioF);
-    
-                // const sql = 'INSERT INTO registrodeponto.Usuarios (usuario, nome, senha, email, cargo) VALUES (' + `'` + [usuarioF.usuario, usuarioF.nome, usuarioF.senha, usuarioF.email, usuarioF.cargo ].join(`','`) + `'` + ')';
-
-                conexao.query(sql, (erro, resultados) => {
+                const sqlCpf = `SELECT COUNT(*) FROM registrodeponto.Usuarios WHERE cpf = '${usuarioF.cpf}'`;
+            
+                conexao.query(sqlCpf, (erro, resultados) => {
+                
                     if(erro){
-                        res.status(400).json(erro);
-                    }else{
-                        res.status(201).json(usuarioF)
+                        res.status(400).json(erro)
+                    } else {
+                        
+                        if(parseInt(resultados.rows[0].count) != 0){
+                            
+                            res.status(400).json({
+                                nome: 'cpf',
+                                mensagem: 'Este cpf já está cadastrado.'
+                            })
+                            
+                        } else {
+
+                            const sql = format('INSERT INTO registrodeponto.Usuarios ?', usuarioF);
+                
+                            conexao.query(sql, (erro, resultados) => {
+                                if(erro){
+                                    res.status(400).json(erro);
+                                }else{
+                                    res.status(201).json(usuarioF)
+                                }
+                            })
+                        }
+
                     }
-                })
+
+                });
+
 
             });
 
