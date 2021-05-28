@@ -17,37 +17,51 @@ class Login {
 
         conexao.query(sql, (erro, resultados) => {
             if(erro){
-                res.status(400).json(erro);
+                res.send({
+                    auth: false,
+                    message: 'Nenhum usuário encontrado!'
+                });
             }
 
             if(resultados.rows.length > 0){
                 bcrypt.compare(senha, resultados.rows[0].senha, (erro, resposta) => {
-                    if(resposta){
-                        
-                        const id = resultados.rows[0].id_usuario;
-                        
-                        const token = jwt.sign({id}, process.env.JWT_SECRET, {
-                            expiresIn: 300,
-                        })
-
-                        delete resultados.rows[0].senha;
-                        
-                        req.session.usuario = resultados.rows[0];
-
-                        res.status(200).json({auth: true, token, result: resultados.rows[0] })
-
-                    } else {
-                        res.status(401).json({
+                    if(erro){
+                        res.send({
                             auth: false,
-                            message: 'Combinação Usuário/Senha errada!'
-                        })
+                            message: 'Senha incorreta!'
+                        });
+                    } else {
+                        if(resposta){
+                            
+                            const id = resultados.rows[0].id_usuario;
+                            
+                            const token = jwt.sign({id}, process.env.JWT_SECRET, {
+                                expiresIn: 300,
+                            })
+    
+                            delete resultados.rows[0].senha;
+                            
+                            req.session.usuario = resultados.rows[0];
+    
+                            res.send({auth: true, token, result: resultados.rows[0] })
+    
+                        } else {
+                            res.send({
+                                auth: false,
+                                message: 'Senha incorreta!'
+                            })
+                        }
                     }
                 })
             } else {
-                res.status(404).json({
+                res.send({
                     auth: false,
-                    message: 'Usuário não encontrado!'
+                    message: 'Nenhum usuário com esse nome!'
                 })
+                // res.status(404).json({
+                //     auth: false,
+                //     message: 'Usuário não encontrado!'
+                // })
             }
 
         })

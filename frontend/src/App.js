@@ -1,5 +1,7 @@
 import './App.css';
 
+import PropTypes from 'prop-types';
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -8,38 +10,16 @@ import {
 } from 'react-router-dom'
 
 import { Home, Login } from './pages'
-import { doLogin, isLogged, doLogout } from './helpers/AuthHandler'
+import { Header } from './components';
+import { Container } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles';
 
-
-export default function App() {
+function App( { classes } ) {
   return (
     <Router>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/users">Users</Link>
-            </li>
-            <li>
-              { isLogged() ?
-                <a 
-                  onClick={e=>{
-                    doLogout();
-                    window.location.href = '/';
-                  }}
-                >
-                  Sair
-                </a>
-                           :
-                <Link to="/login">Login</Link>
-              }
-            </li>
-          </ul>
-        </nav>
-
+      <Header/>
+      <Container>
+        <div className={classes.toolbar} ></div>
         <Switch>
           <Route path="/login">
             <Login/>
@@ -51,8 +31,7 @@ export default function App() {
             <Home/>
           </Route>
         </Switch>
-
-      </div>
+      </Container>
     </Router>
   );
 }
@@ -60,3 +39,13 @@ export default function App() {
 function Users() {
   return <h2>Users</h2>;
 }
+
+App.propTypes = {
+  classes: PropTypes.object.isRequired
+}
+
+const styles = (theme) => ({
+  toolbar: theme.mixins.toolbar,
+})
+
+export default withStyles(styles)(App);
