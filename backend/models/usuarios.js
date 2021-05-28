@@ -1,4 +1,3 @@
-const moment = require('moment');
 const conexao = require('../infraestrutura/conexao');
 const bcrypt = require('bcrypt');
 const format = require('sqlutils/pg/format');
@@ -102,9 +101,9 @@ class Usuario {
                 res.status(400).json(erro)
             } else {
                 if(resultados.rows.length >= 2){
-                    res.status(201).json(resultados.rows)
+                    res.status(200).json(resultados.rows)
                 } else {
-                    res.status(201).json(...resultados.rows)
+                    res.status(200).json(...resultados.rows)
                 }
             }
         })
@@ -114,11 +113,10 @@ class Usuario {
         const sql = `SELECT * FROM registrodeponto.Usuarios WHERE id_usuario=$1`;
 
         conexao.query(sql, [id], (erro, resultados) => {
-            // const usuario = resultados[0]
             if(erro) {
                 res.status(400).json(erro);
             } else {
-                res.status(201).json(...resultados.rows);
+                res.status(200).json(...resultados.rows);
             }
         })
     }
@@ -131,7 +129,7 @@ class Usuario {
             if(erro) {
                 res.status(400).json(erro);
             } else {
-                res.status(201).json({...valores, id});
+                res.status(200).json({...valores, id});
             }
         })
     }
@@ -143,7 +141,7 @@ class Usuario {
             if(erro) {
                 res.status(400).json(erro.message);
             } else {
-                res.status(201).json({id});
+                res.status(200).json({id});
             }
         })
     }
