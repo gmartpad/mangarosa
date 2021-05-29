@@ -121,6 +121,19 @@ class Usuario {
         })
     }
 
+    buscaPorUsuario(usuario, res) {
+        const sql = `SELECT * FROM registrodeponto.Usuarios WHERE usuario='${usuario}'`;
+
+        conexao.query(sql, (erro, resultados) => {
+            if(erro) {
+                res.status(400).json(erro);
+            } else {
+                // delete resultados.rows.data.senha;
+                res.status(200).json(...resultados.rows);
+            }
+        })
+    }
+
     altera(id, valores, res) {
 
         const sql = format(`UPDATE registrodeponto.Usuarios SET ? WHERE id_usuario=${id}`, valores);

@@ -17,7 +17,10 @@ class Registro {
 
         conexao.query(sqlCheck, (erro, resultados) => {
             if(erro){
-                res.status(400).json(erro);
+                res.send({
+                    auth: false,
+                    message: 'Nenhum usuário encontrado!'
+                });
             }else{
 
                 const nomeEhValido = registroDatado.nome === resultados.rows[0].nome;
@@ -26,7 +29,7 @@ class Registro {
 
                 const cpfEhValido = registroDatado.cpf === resultados.rows[0].cpf;
 
-                const celularEhValido = registroDatado.celular !== undefined ? /\(?[0-9]{2}\)?\s*[0-9]{5}\s*\-?\s*[0-9]{4}/.test(registroDatado.celular) : true;
+                const celularEhValido = registroDatado.celular !== '' ? /\([0-9]{2}\)\s[0-9]\s[0-9]{4}\-[0-9]{4}/.test(registroDatado.celular) : true;
 
                 const validacoes = [
                     {
@@ -55,7 +58,10 @@ class Registro {
                 const existemErros = erros.length;
 
                 if(existemErros){
-                    res.status(400).json(erros);
+                    res.send({
+                        auth: false,
+                        message: erros
+                    });
                 }else{
 
                     delete registroDatado.nome;
@@ -63,11 +69,14 @@ class Registro {
                     delete registroDatado.cpf;
                 
                     const sqlCount = `SELECT COUNT(*) FROM registrodeponto.Registros WHERE usuario = ${registroDatado.usuario}`;
-                    
+
                     conexao.query(sqlCount, (erro, resultados) => {
         
                         if(erro){
-                            res.status(400).json(erro)
+                            res.send({
+                                auth: false,
+                                message: 'Nenhum usuário encontrado!'
+                            });
                         } else {
         
                             const registroComID = {
@@ -76,12 +85,18 @@ class Registro {
                             }
         
                             const sqlInsert = format('INSERT INTO registrodeponto.Registros ?', registroComID);
-        
+
                             conexao.query(sqlInsert, (erro, resultados) => {
                                 if(erro){
-                                    res.status(400).json(erro.message);
+                                    res.send({
+                                        auth: false,
+                                        message: 'Erro na inserção do registro no banco de dados!'
+                                    });
                                 }else{
-                                    res.status(201).json(registroComID)
+                                    res.send({
+                                        auth: true,
+                                        message: 'Registro feito sucesso!'
+                                    })
                                 }
                             })
         
@@ -98,11 +113,14 @@ class Registro {
     }
 
     lista(res) {
-        const sql = "SELECT * FROM registrodeponto.Registros";
+        const sql = "SELECT registrodeponto.Registros.*, registrodeponto.Usuarios.nome, registrodeponto.Usuarios.usuario AS usuario_colaborador FROM registrodeponto.Registros LEFT JOIN registrodeponto.Usuarios ON registrodeponto.Registros.usuario = registrodeponto.Usuarios.id_usuario";
 
         conexao.query(sql, (erro, resultados) => {
             if(erro) {
-                res.status(400).json(erro)
+                res.send({
+                    auth: false,
+                    message: 'Não foi possível resgatar os registros!'
+                });
             } else {
                 if(resultados.rows.length >= 2){
                     res.status(200).json(resultados.rows)
@@ -114,9 +132,35 @@ class Registro {
     }
 
     buscaPorId(id, res) {
-        const sql = `SELECT * FROM registrodeponto.Registros WHERE id_usuario=$1`;
+        const sql = `SELECT registrodeponto.Registros.*, 
+                            registrodeponto.Usuarios.nome, 
+                            registrodeponto.Usuarios.email, 
+                            registrodeponto.Usuarios.cpf 
+                    FROM registrodeponto.Registros 
+                    LEFT JOIN registrodeponto.Usuarios 
+                    ON registrodeponto.Registros.usuario = registrodeponto.Usuarios.id_usuario 
+                    WHERE id_registro=${id}`;
 
-        conexao.query(sql, [id], (erro, resultados) => {
+        conexao.query(sql,  (erro, resultados) => {
+            if(erro) {
+                res.status(400).json(erro);
+            } else {
+                res.status(200).json(...resultados.rows);
+            }
+        })
+    }
+
+    buscaPorIdDuplo(id_usuario, idnregistrousuario, res) {
+        const sql = `SELECT registrodeponto.Registros.*, 
+                            registrodeponto.Usuarios.nome, 
+                            registrodeponto.Usuarios.email, 
+                            registrodeponto.Usuarios.cpf 
+                    FROM registrodeponto.Registros 
+                    LEFT JOIN registrodeponto.Usuarios 
+                    ON registrodeponto.Registros.usuario = registrodeponto.Usuarios.id_usuario 
+                    WHERE registrodeponto.Registros.usuario=${id_usuario} AND idnregistrousuario=${idnregistrousuario}`;
+
+        conexao.query(sql, (erro, resultados) => {
             if(erro) {
                 res.status(400).json(erro);
             } else {
@@ -126,7 +170,8 @@ class Registro {
     }
 
     altera(id, valores, res) {
-        const sql = format(`UPDATE registrodeponto.Registros SET ? WHERE id_usuario=${id}`, valores);
+
+        const sql = format(`UPDATE registrodeponto.Registros SET ? WHERE id_registro=${id}`, valores);
 
         conexao.query(sql, (erro, resultados) => {
             if(erro) {

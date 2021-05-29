@@ -21,7 +21,7 @@ class Tabelas {
     }
 
     criarRegistros() {
-        const sql = `SET timezone to 'America/Sao_Paulo'; CREATE TABLE IF NOT EXISTS registrodeponto.Registros (id_registro SERIAL, idNRegistroUsuario integer NOT NULL, usuario integer NOT NULL, celular varchar(11), conhecimentos varchar(100), dateTimeRegistro timestamp NOT NULL, validado char(1) NOT NULL DEFAULT 'N', dateTimeValidacao timestamp, PRIMARY KEY(id_registro), CONSTRAINT fk_usuario FOREIGN KEY (usuario) REFERENCES registrodeponto.Usuarios(id_usuario))`;
+        const sql = `SET timezone to 'America/Sao_Paulo'; CREATE TABLE IF NOT EXISTS registrodeponto.Registros (id_registro SERIAL, idNRegistroUsuario integer NOT NULL, usuario integer NOT NULL, celular varchar(16), conhecimentos varchar(100), dateTimeRegistro timestamp NOT NULL, validado char(1) NOT NULL DEFAULT 'N', dateTimeValidacao timestamp, PRIMARY KEY(id_registro), CONSTRAINT fk_usuario FOREIGN KEY (usuario) REFERENCES registrodeponto.Usuarios(id_usuario))`;
 
         this.conexao.query(sql, err => {
             if(err) {

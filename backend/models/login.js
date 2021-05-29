@@ -36,7 +36,7 @@ class Login {
                             const id = resultados.rows[0].id_usuario;
                             
                             const token = jwt.sign({id}, process.env.JWT_SECRET, {
-                                expiresIn: 300,
+                                expiresIn: '999 days',
                             })
     
                             delete resultados.rows[0].senha;
