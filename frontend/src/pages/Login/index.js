@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
-import { Form } from './styled';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom'
 import axios from 'axios';
 import { doLogin } from '../../helpers/AuthHandler'
-import Cookies from 'js-cookie';
 import { Container, TextField, Checkbox, FormControlLabel, Button, Typography } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles';
 import { ToastContainer, toast } from 'react-toastify';
@@ -11,14 +11,27 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function Login({ classes }) {
 
+    const history = useHistory();
+
+    //-----------------------------------------
+
+    const dispatch = useDispatch();
+
+    const setSuccess = (success) => dispatch({
+        type: 'SET_SUCCESS',
+        payload: {
+            success
+        }
+    })
+
+    //------------------------------------------
+
     const [nome, setNome] = useState("");
     const [senha, setSenha] = useState("");
-    const [mensagem, setMensagem] = useState("");
 
     const [rememberPassword, setRememberPassword] = useState(false);
 
     const notifyError = (m) => toast.error(m);
-    const notifySuccess = (m) => toast.success(m, {autoClose: 3000});
 
     const login = (e) => {
 
@@ -34,33 +47,18 @@ function Login({ classes }) {
                 const token = res.data.token;
                 const id = res.data.result.id_usuario;
                 const cargo = res.data.result.cargo;
+                const usuario = res.data.result.usuario;
                 
-                doLogin(token, id, cargo, rememberPassword);
+                doLogin(token, id, cargo, usuario, rememberPassword);
                 
-                notifySuccess(`Login efetuado com sucesso!`);
+                setSuccess(`Login efetuado com sucesso!`);
                 
                 setTimeout(()=>{
-                    window.location.href = '/';
-                }, 3000)
+                    history.push('/');
+                }, 200)
             }
         }).catch((err) => {
             console.log(`${err}`);
-        })
-
-    }
-
-    const isUserAuthenticated = (e) => {
-
-        e.preventDefault();
-
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/isUserAuth`, {
-            headers: {
-                "x-access-token": Cookies.get('token'),
-            },
-        }).then((res) => {
-            console.log(res);
-        }).catch((err) => {
-            console.log(err);
         })
 
     }
@@ -73,7 +71,8 @@ function Login({ classes }) {
             >
                 LOGIN
             </Typography>
-            <Form
+            <form
+                className={classes.form}
                 onSubmit={login}
             >
                 <TextField
@@ -115,14 +114,7 @@ function Login({ classes }) {
                 >
                     Enviar
                 </Button>
-                {/* <Button 
-                    variant="contained" 
-                    color="secondary"
-                >
-                    Testar Auth
-                </Button> */}
-                {/* {nome} - {senha} - {rememberPassword ? 'true' : 'false'} */}
-            </Form>
+            </form>
             <ToastContainer />
         </Container>
     )
@@ -144,6 +136,10 @@ const styles = {
     button: {
         fontWeight: 'bold',
         minHeight: '50px'
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column'
     }
 
 }

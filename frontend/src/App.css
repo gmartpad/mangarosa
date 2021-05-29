@@ -2,6 +2,14 @@
   font-family: 'Roboto', sans-serif;
 }
 
+html, #root {
+  height: 100%;
+}
+
+body {
+  height: -webkit-fill-available;
+}
+
 .App {
   text-align: center;
 }
