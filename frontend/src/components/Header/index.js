@@ -11,7 +11,6 @@ function Header( { classes } ) {
 
     const [logged, setLogged] = useState(isLogged());
     const [admin, setAdmin] = useState(isAdmin());
-    const [usuarioColaborador, setUsuarioColaborador] = useState(Cookies.get('usuario'));
 
     const toastr = useSelector(state => state.toastr);
 
@@ -61,7 +60,7 @@ function Header( { classes } ) {
                         <LinkM 
                             className={classes.linkm}
                             component={Link} 
-                            to={`/${usuarioColaborador}/registrar`}
+                            to={`/${Cookies.get('usuario')}/registrar`}
                         >
                             REGISTRAR
                         </LinkM>
