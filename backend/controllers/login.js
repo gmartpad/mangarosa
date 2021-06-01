@@ -3,7 +3,7 @@ const verifyJWT = require('../middleware/verifyJWT');
 
 module.exports = app => {
 
-    app.post('/login', verifyJWT, (req, res) => {
+    app.post('/login', (req, res) => {
         Login.fazerLogin(req, res);
     })
 
