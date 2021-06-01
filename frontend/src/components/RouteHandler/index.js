@@ -46,5 +46,3 @@ export default ({ children, ...rest }) => {
     );
 
 }
-
-//'Você não tem autorização para acessar esta rota.'

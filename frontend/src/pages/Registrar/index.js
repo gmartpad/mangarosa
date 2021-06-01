@@ -197,14 +197,14 @@ function Registrar( { classes } ) {
                 const labelId = `transfer-list-item-${value}-label`;
 
                 return (
-                <ListItem key={value} role="listitem" button onClick={(leftChecked.length >= 3 && right.length <= 3) || (right.length == 3) || (leftChecked.length == 1 && right.length == 2) || (leftChecked.length == 2 && right.length == 1) ? null : handleToggle(value)}>
+                <ListItem key={value} role="listitem" button onClick={(leftChecked.length >= 3 && right.length <= 3) || (right.length === 3) || (leftChecked.length === 1 && right.length === 2) || (leftChecked.length === 2 && right.length === 1) ? null : handleToggle(value)}>
                     <ListItemIcon>
                     <Checkbox
                         checked={checked.indexOf(value) !== -1}
                         tabIndex={-1}
                         disableRipple
                         inputProps={{ 'aria-labelledby': labelId }}
-                        disabled={ (leftChecked.length >= 3 && right.length <= 3) || (right.length == 3) || (leftChecked.length == 1 && right.length == 2) || (leftChecked.length == 2 && right.length == 1)}
+                        disabled={ (leftChecked.length >= 3 && right.length <= 3) || (right.length === 3) || (leftChecked.length === 1 && right.length === 2) || (leftChecked.length === 2 && right.length === 1)}
                     />
                     </ListItemIcon>
                     <ListItemText id={labelId} primary={`${value}`} />
@@ -220,10 +220,10 @@ function Registrar( { classes } ) {
 
     const ativaBotao = () => {
         if(
-            nomeErrorText.length == 0 &&
-            emailErrorText.length == 0 &&
-            CPFErrorText.length == 0 &&
-            celularErrorText.length == 0 &&
+            nomeErrorText.length === 0 &&
+            emailErrorText.length === 0 &&
+            CPFErrorText.length === 0 &&
+            celularErrorText.length === 0 &&
             right.length >= 1
         ){
             setButtonsDisabled(false);

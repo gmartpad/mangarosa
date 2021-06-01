@@ -57,7 +57,7 @@ function Registros( { classes } ) {
     }, [])
 
     const usuarioAtual = (e) => {
-        return e.usuario == userId;
+        return e.usuario === userId;
     }
 
     //-----------------------------------------

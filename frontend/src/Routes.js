@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Switch, Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import { Container } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import RouteHandler from './components/RouteHandler'
